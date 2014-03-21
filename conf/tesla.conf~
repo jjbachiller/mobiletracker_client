@@ -1,0 +1,10 @@
+
+shop_id="520d44ed64ec6158db000003"
+
+sensor_secret="54ec692a71d65120d28145b9369b6aabfc9e25c6"
+
+cerebellum="http://192.168.1.18:3000/feed"
+
+seed_second=0
+
+log=""

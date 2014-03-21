@@ -1,0 +1,4 @@
+project(teslasensor)
+
+add_executable(teslasensor main.cpp)
+

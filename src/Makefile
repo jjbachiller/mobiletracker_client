@@ -1,0 +1,43 @@
+AC_ROOT		= ..
+
+TEST_DIR	= $(AC_ROOT)/test
+
+CFLAGS		+= -Iinclude
+
+iCC             = $(shell find /opt/intel/cc/*/bin/icc)
+iCFLAGS         = -w -mcpu=pentiumpro -march=pentiumpro $(COMMON_CFLAGS)
+iOPTFLAGS       = -O3 -ip -ipo -D_FILE_OFFSET_BITS=64
+PROF_DIR	= $(PWD)/prof
+
+HAVE_PCAP	= $(shell ld -lpcap 2> /dev/null && echo yes)
+ifeq ($(HAVE_PCAP), yes) #cannot link with -lpcap, skip crawler
+	BINFILES	+= besside-ng-crawler$(EXE)
+endif
+
+SBINFILES       = teslasensor$(EXE)
+		 
+OBJS_TESE	= teslasensor.o
+
+all: $(SBINFILES)
+
+teslasensor$(EXE): $(OBJS_TESE)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS_TESE) -o $(@) $(LIBS) $(LIBSSL) -lpthread -ljson -lcurl -lconfig
+
+strip: $(BINFILES) $(SBINFILES)
+	strip $(BINFILES) $(SBINFILES)
+
+clean:
+	$(MAKE) -C $(OSD) clean
+	-rm -f $(SBINFILES) $(BINFILES) $(OPTFILES) teslasensor$(EXE)
+
+distclean: clean
+
+install: all
+	$(MAKE) -C $(OSD) install
+	install -d $(DESTDIR)$(sbindir)
+	install -m 755 $(SBINFILES) $(DESTDIR)$(sbindir)
+
+uninstall:
+	$(MAKE) -C $(OSD) uninstall
+	-rm -f $(DESTDIR)$(sbindir)/teslasensor$(EXE)
+	-rm -rf $(DESTDIR)$(etcdir)
